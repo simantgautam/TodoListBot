@@ -31,23 +31,30 @@ let AddTodo = (data) => {
   };
 };
 
-let patchData = (id, data) => {
-  return (dispatch) => {
-    try {
-      axios
-        .patch(`http://localhost:3000/todos/${id}`, data)
-        .then((res) => {
-          getData();
-        })
-        .catch((error) => {
-          dispatch(getData());
-          console.log("first");
-          console.error("Error updating todo:", error);
-        });
-    } catch (error) {
-      console.error("Error updating todo:", error);
-    }
-  };
+const patchData = (id, data) => (dispatch) => {
+  console.log(id, data);
+  try {
+    axios
+      .patch(
+        `http://localhost:3000/todos/${id}`,
+        { title: data },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        console.log("hell");
+        dispatch(getData());
+      })
+      .catch((error) => {
+        dispatch(getData());
+        console.error("Error updating todo:", error);
+      });
+  } catch (error) {
+    console.error("Error updating todo:", error);
+  }
 };
 
 let deleteTodo = (id) => {

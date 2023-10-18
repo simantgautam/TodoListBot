@@ -28,9 +28,14 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isNewOpen, onNewOpen, onNewClose } = useDisclosure();
+  const {
+    isOpen: isNewOpen,
+    onOpen: onNewOpen,
+    onClose: onNewClose,
+  } = useDisclosure();
 
   const [task, setTask] = useState("");
+  const [id, setId] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -52,14 +57,11 @@ export default function Home() {
     return state.todos;
   });
 
-  const handleEditTodo = (id) => {
-    // dispatch(patchData(id, task));
-    // onClose();
-  };
-
-  const handleDelete = () => {
-    dispatch(patchData(task));
-  };
+  // const handleNewTodo = (id, title) => {
+  //   // console.log(id);
+  //   dispatch(patchData(id, title));
+  //   onNewClose();
+  // };
 
   return (
     <main className="max-w-4xl mx-auto mt-4">
@@ -106,11 +108,43 @@ export default function Home() {
                     <Td>{elem.title}</Td>
                     <Td
                       onClick={() => {
-                        handleEditTodo(elem.id, elem.title);
+                        onNewOpen();
+                        setId(elem.id);
+                        console.log(elem.id);
                       }}
                     >
                       Edit
                     </Td>
+                    <Modal isOpen={isNewOpen} onClose={onNewClose}>
+                      <ModalOverlay />
+                      <ModalContent>
+                        <ModalHeader>Edit Task</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody pb={6}>
+                          <FormControl>
+                            <FormLabel>Task Name</FormLabel>
+                            <Input
+                              placeholder="Enter Task"
+                              onChange={handleTask}
+                            />
+                          </FormControl>
+                        </ModalBody>
+
+                        <ModalFooter>
+                          <Button
+                            colorScheme="blue"
+                            mr={3}
+                            onClick={() => {
+                              dispatch(patchData(id, task));
+                              onNewClose();
+                            }}
+                          >
+                            Save
+                          </Button>
+                          <Button onClick={onNewClose}>Cancel</Button>
+                        </ModalFooter>
+                      </ModalContent>
+                    </Modal>
                     <Td
                       onClick={() => {
                         dispatch(deleteTodo(elem.id));
